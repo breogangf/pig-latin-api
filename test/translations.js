@@ -53,7 +53,7 @@ describe('Translations', () => {
     });
     it('should be able to translate the given text to pig latin', (done) => {
       const body = {
-        message: 'This is the text to be translated'
+        message: 'yellow'
       };
       chai.request(server)
         .post('/translations')
@@ -63,6 +63,13 @@ describe('Translations', () => {
           res.should.have.status(201);
           res.should.be.json;
           res.body.should.be.an('Object');
+          res.body.should.have.property('userId');
+          res.body.userId.should.equal('BREO');
+          res.body.should.have.property('originalText');
+          res.body.originalText.should.equal('yellow');
+          res.body.should.have.property('translatedText');
+          res.body.translatedText.should.equal('ellowyay');
+          res.body.should.have.property('createdAt');
           Translation.count({}, (errorCountingTranslations, count) => {
             count.should.equal(1);
             done();

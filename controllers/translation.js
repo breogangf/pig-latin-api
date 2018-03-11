@@ -1,5 +1,6 @@
 const logger = require('../helpers/logger');
 const Translation = require('../models/translation');
+const translationHelper = require('../helpers/translationsHelper');
 
 exports.translate = (req, res) => {
     //TODO recover userId from the authenticated request headers
@@ -7,8 +8,7 @@ exports.translate = (req, res) => {
     const userId = req.headers.userid;
     if (req.body.message === undefined) return res.status(400).send({ message: 'Please provide a message to be translated' });
     const originalText = req.body.message;
-    //TODO translate the text to pig latin, for now translated text is only the original message
-    const translatedText = req.body.message;
+    const translatedText = translationHelper.translatetoPigLatin(originalText);
     const translation = {
         userId,
         originalText,
