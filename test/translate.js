@@ -20,9 +20,25 @@ describe('Translations', () => {
       .catch(done);
   });
   describe('POST /translations', () => {
+    it('should return 403 if no userId is provided', (done) => {
+      chai.request(server)
+        .post('/translations')
+        .end((err, res) => {
+          res.should.have.status(403);
+          res.should.be.json;
+          res.body.should.be.an('Object');
+          res.body.should.have.property('message');
+          res.body.message.should.equal('Not authorized to perform this action');
+          Translation.count({}, (errorCountingTranslations, count) => {
+            count.should.equal(0);
+            done();
+          });
+        });
+    });
     it('should return 400 if no message is send to be translated', (done) => {
       chai.request(server)
         .post('/translations')
+        .set('userId', 'BREO')
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -41,6 +57,7 @@ describe('Translations', () => {
       };
       chai.request(server)
         .post('/translations')
+        .set('userId', 'BREO')
         .send(body)
         .end((err, res) => {
           res.should.have.status(201);
