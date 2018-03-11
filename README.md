@@ -25,3 +25,8 @@ Execute the tests
 ```
 npm test
 ```
+
+## TODO
+
+* Mock authentication for testing environment
+* Log out feature for removing session data
