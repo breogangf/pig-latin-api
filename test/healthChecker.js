@@ -11,7 +11,7 @@ process.env.NODE_ENV = 'test';
 
 describe('HealthChecker', () => {
   describe('GET /', () => {
-    it('Should check that our app is up and running', (done) => {
+    it('should check that our app is up and running', (done) => {
       chai.request(server)
         .get('/')
         .end((err, res) => {
