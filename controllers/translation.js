@@ -22,3 +22,16 @@ exports.translate = (req, res) => {
         return res.status(201).send(createdTranslation);
     });
 };
+
+exports.getTranslationsByUserId = (req, res) => {
+    //TODO recover userId from the authenticated request headers
+    if (req.headers.userid === undefined) return res.status(403).send({ message: 'Not authorized to perform this action' });
+    const userId = req.headers.userid;
+    Translation.find({ userId }, (errorRetrievingTranslations, translations) => {
+        if (errorRetrievingTranslations) {
+            logger.log(`Error retrieving translations form the DDBB: ${errorRetrievingTranslations}`);
+            return res.status(500).send({ message: `Error retrieving translations form the DDBB: ${errorRetrievingTranslations}` });
+        }
+        return res.status(200).send(translations);
+    });
+};

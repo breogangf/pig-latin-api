@@ -27,7 +27,7 @@ app.use(methodOverride());
 
 
 // Import controllers
-const TranslatorCtrl = require('./controllers/translator');
+const TranslationCtrl = require('./controllers/translation');
 
 app.use(router);
 
@@ -35,8 +35,9 @@ app.use(router);
 router.route('/')
   .get(healthChecker.initialCheck);
 
-router.route('/translate')
-  .post(TranslatorCtrl.translate);
+router.route('/translations')
+  .post(TranslationCtrl.translate)
+  .get(TranslationCtrl.getTranslationsByUserId);
 
 app.use('/', router);
 
