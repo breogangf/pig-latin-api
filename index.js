@@ -28,12 +28,16 @@ app.use(methodOverride());
 
 // Import controllers
 const TranslationCtrl = require('./controllers/translation');
+const UserCtrl = require('./controllers/user');
 
 app.use(router);
 
 // API routes
 router.route('/')
   .get(healthChecker.initialCheck);
+
+router.route('/users')
+.post(UserCtrl.registerUser);
 
 router.route('/translations')
   .post(TranslationCtrl.translate)
