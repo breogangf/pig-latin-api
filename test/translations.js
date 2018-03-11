@@ -5,14 +5,15 @@ const server = require('../index');
 const should = chai.should();
 const expect = chai.expect;
 
+const session = require('express-session');
+
 const Translation = require('../models/translation');
 
 chai.use(chaiHttp);
 
-process.env.NODE_ENV = 'test';
-
 describe('Translations', () => {
   beforeEach((done) => {
+    process.env.NODE_ENV = 'test';
     Promise.all([
       Translation.remove()
     ])
@@ -20,7 +21,8 @@ describe('Translations', () => {
       .catch(done);
   });
   describe('POST /translations', () => {
-    it('should return 403 if no userId is provided', (done) => {
+    it('should return 403 if there is no session', (done) => {
+      process.env.NODE_ENV = 'no-test';
       chai.request(server)
         .post('/translations')
         .end((err, res) => {
@@ -38,7 +40,6 @@ describe('Translations', () => {
     it('should return 400 if no message is send to be translated', (done) => {
       chai.request(server)
         .post('/translations')
-        .set('userId', 'BREO')
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -79,6 +80,7 @@ describe('Translations', () => {
   });
   describe('GET /translations', () => {
     it('should return 403 if no userId is provided', (done) => {
+      process.env.NODE_ENV = 'no-test';
       chai.request(server)
         .get('/translations')
         .end((err, res) => {
@@ -98,21 +100,20 @@ describe('Translations', () => {
       ];
       Translation.collection.insert(translations, () => {
         chai.request(server)
-        .get('/translations')
-        .set('userId', 'BREO')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.should.be.json;
-          res.body.should.be.an('Array');
-          res.body.length.should.equal(2);
-          res.body[0].should.have.property('userId').equal('BREO');
-          res.body[0].should.have.property('originalText');
-          res.body[0].should.have.property('translatedText');
-          res.body[1].should.have.property('userId').equal('BREO');
-          res.body[1].should.have.property('originalText');
-          res.body[1].should.have.property('translatedText');
-          done();
-        });
+          .get('/translations')
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.should.be.json;
+            res.body.should.be.an('Array');
+            res.body.length.should.equal(2);
+            res.body[0].should.have.property('userId').equal('BREO');
+            res.body[0].should.have.property('originalText');
+            res.body[0].should.have.property('translatedText');
+            res.body[1].should.have.property('userId').equal('BREO');
+            res.body[1].should.have.property('originalText');
+            res.body[1].should.have.property('translatedText');
+            done();
+          });
       });
     });
   });

@@ -3,8 +3,11 @@ const Translation = require('../models/translation');
 const translationHelper = require('../helpers/translationsHelper');
 
 exports.translate = (req, res) => {
-    //TODO recover userId from the authenticated request headers
-    if (req.headers.userid === undefined) return res.status(403).send({ message: 'Not authorized to perform this action' });
+    //TODO mock session
+    if (process.env.NODE_ENV === 'test') {
+        req.session.userid = 'BREO';
+	}
+    if (req.session.userid === undefined) return res.status(403).send({ message: 'Not authorized to perform this action' });
     const userId = req.headers.userid;
     if (req.body.message === undefined) return res.status(400).send({ message: 'Please provide a message to be translated' });
     const originalText = req.body.message;
@@ -25,9 +28,12 @@ exports.translate = (req, res) => {
 };
 
 exports.getTranslationsByUserId = (req, res) => {
-    //TODO recover userId from the authenticated request headers
-    if (req.headers.userid === undefined) return res.status(403).send({ message: 'Not authorized to perform this action' });
-    const userId = req.headers.userid;
+    //TODO mock session
+    if (process.env.NODE_ENV === 'test') {
+        req.session.userid = 'BREO';
+	}
+    if (req.session.userid === undefined) return res.status(403).send({ message: 'Not authorized to perform this action' });
+    const userId = req.session.userid;
     Translation.find({ userId }, (errorRetrievingTranslations, translations) => {
         if (errorRetrievingTranslations) {
             logger.log(`Error retrieving translations form the DDBB: ${errorRetrievingTranslations}`);

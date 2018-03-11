@@ -55,4 +55,35 @@ describe('Users', () => {
         });
     });
   });
+  describe('POST /users/login', () => {
+    it('should return 401 if the provided email + password combination does not match', (done) => {
+      const user = { username: 'breogangf', email: 'example@gmail.com', password: 'awesomePassword' };
+      User.create(user, (errorCreatingUser, createdUser) => {
+        chai.request(server)
+				.post('/users/login')
+				.send({ email: 'wrong@gmail.com', password: 'wrongpass' })
+        .end((err, res) => {
+          res.should.have.status(401);
+          done();
+        });
+      });
+    });
+    it('should return the user after the successful login', (done) => {
+      const user = { username: 'breogangf', email: 'example@gmail.com', password: 'awesomePassword' };
+      User.create(user, (errorCreatingUser, createdUser) => {
+        chai.request(server)
+				.post('/users/login')
+				.send({ email: 'example@gmail.com', password: 'awesomePassword' })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.should.be.json;
+					res.body.should.be.an('Object');
+					res.body.should.have.property('username').equal(user.username);
+					res.body.should.have.property('email').equal(user.email);
+					res.body.should.have.property('password').not.equal(user.password);
+          done();
+        });
+      });
+		});
+  });
 });
